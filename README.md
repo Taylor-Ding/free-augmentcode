@@ -10,7 +10,7 @@ Free AugmentCode 是一个用于清理AugmentCode相关数据的工具，可以�
 
 - 📝 修改Telemetry ID
   - 重置设备 ID 和机器 ID
-  - 自动备份原始数据
+  - 自动备份原始 ID 文件
   - 生成新的随机 ID
 
 - 🗃️ 数据库清理
@@ -55,6 +55,31 @@ free-augmentcode/
 │   └── workspace_cleaner.py  # 工作区清理工具
 └── utils/                # 通用工具目录
     └── paths.py             # 路径管理工具
+```
+
+## 代码流程图
+
+```mermaid
+graph TD
+    A[开始 index.py / Start index.py] --> B{显示系统路径 / Display System Paths};
+    B --> C{修改遥测 ID / Modify Telemetry IDs};
+    C --&gt; D[调用 modify_telemetry_ids / Call modify_telemetry_ids];
+    D --&gt; D_B1[备份 storage.json 和 machineid 文件 / Backup storage.json & machineid file];
+    D_B1 --&gt; D_R[读取 storage.json / Read storage.json];
+    D_R --&gt; D_G[生成新 ID / Generate new IDs];
+    D_G --&gt; D_U[更新 storage.json / Update storage.json];
+    D_U --&gt; D_W[写入新 machineid 文件 / Write new machineid file];
+    D_W --&gt; E{清理 SQLite 数据库 / Clean SQLite Database};
+    E --&gt; F[调用 clean_augment_data / Call clean_augment_data];
+    F --&gt; F_B1[备份 state.vscdb / Backup state.vscdb];
+    F_B1 --&gt; F_C[连接数据库 / Connect to DB];
+    F_C --&gt; F_D[删除 'augment' 相关记录 / Delete 'augment' records];
+    F_D --&gt; F_CM[提交更改 / Commit changes];
+    F_CM --&gt; G{清理工作区存储 / Clean Workspace Storage};
+    G --&gt; H[调用 clean_workspace_storage / Call clean_workspace_storage];
+    H --&gt; H_B1[备份 workspaceStorage (zip) / Backup workspaceStorage (zip)];
+    H_B1 --&gt; H_D[删除 workspaceStorage 内容 / Delete contents of workspaceStorage];
+    H_D --&gt; I[结束 / End];
 ```
 
 ## 贡献
@@ -120,6 +145,31 @@ free-augmentcode/
 │   └── workspace_cleaner.py  # Workspace cleanup tool
 └── utils/                # Common utilities directory
     └── paths.py             # Path management tool
+```
+
+## Code Flowchart
+
+```mermaid
+graph TD
+    A[开始 index.py / Start index.py] --> B{显示系统路径 / Display System Paths};
+    B --> C{修改遥测 ID / Modify Telemetry IDs};
+    C --&gt; D[调用 modify_telemetry_ids / Call modify_telemetry_ids];
+    D --&gt; D_B1[备份 storage.json 和 machineid 文件 / Backup storage.json & machineid file];
+    D_B1 --&gt; D_R[读取 storage.json / Read storage.json];
+    D_R --&gt; D_G[生成新 ID / Generate new IDs];
+    D_G --&gt; D_U[更新 storage.json / Update storage.json];
+    D_U --&gt; D_W[写入新 machineid 文件 / Write new machineid file];
+    D_W --&gt; E{清理 SQLite 数据库 / Clean SQLite Database};
+    E --&gt; F[调用 clean_augment_data / Call clean_augment_data];
+    F --&gt; F_B1[备份 state.vscdb / Backup state.vscdb];
+    F_B1 --&gt; F_C[连接数据库 / Connect to DB];
+    F_C --&gt; F_D[删除 'augment' 相关记录 / Delete 'augment' records];
+    F_D --&gt; F_CM[提交更改 / Commit changes];
+    F_CM --&gt; G{清理工作区存储 / Clean Workspace Storage};
+    G --&gt; H[调用 clean_workspace_storage / Call clean_workspace_storage];
+    H --&gt; H_B1[备份 workspaceStorage (zip) / Backup workspaceStorage (zip)];
+    H_B1 --&gt; H_D[删除 workspaceStorage 内容 / Delete contents of workspaceStorage];
+    H_D --&gt; I[结束 / End];
 ```
 
 ## Contributing

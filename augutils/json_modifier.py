@@ -7,15 +7,15 @@ from utils.device_codes import generate_machine_id, generate_device_id
 
 def _create_backup(file_path: str) -> str:
     """
-    Creates a backup of the specified file with timestamp.
+    创建指定文件的带时间戳的备份。
     
-    Args:
-        file_path (str): Path to the file to backup
+    参数:
+        file_path (str): 要备份的文件的路径
         
-    Returns:
-        str: Path to the backup file
+    返回:
+        str: 备份文件的路径
         
-    Format: <filename>.bak.<timestamp>
+    格式: <文件名>.bak.<时间戳>
     """
     timestamp = int(time.time())
     backup_path = f"{file_path}.bak.{timestamp}"
@@ -24,26 +24,26 @@ def _create_backup(file_path: str) -> str:
 
 def modify_telemetry_ids() -> dict:
     """
-    Modifies the telemetry IDs in the VS Code storage.json file and machine ID file.
-    Creates backups before modification.
+    修改 VS Code storage.json 文件和 machine ID 文件中的遥测 ID。
+    在修改前创建备份。
     
-    This function:
-    1. Creates backups of the storage.json and machine ID files
-    2. Reads the storage.json file
-    3. Generates new machine and device IDs
-    4. Updates the telemetry.machineId and telemetry.devDeviceId values in storage.json
-    5. Updates the machine ID file with the new machine ID
-    6. Saves the modified files
+    此函数执行以下操作：
+    1. 创建 storage.json 和 machine ID 文件的备份
+    2. 读取 storage.json 文件
+    3. 生成新的 machine ID 和 device ID
+    4. 更新 storage.json 中的 telemetry.machineId 和 telemetry.devDeviceId 值
+    5. 使用新的 machine ID 更新 machine ID 文件
+    6. 保存修改后的文件
     
-    Returns:
-        dict: A dictionary containing the old and new IDs and backup information
+    返回:
+        dict: 包含旧 ID、新 ID 和备份信息的字典
         {
-            'old_machine_id': str,
-            'new_machine_id': str,
-            'old_device_id': str,
-            'new_device_id': str,
-            'storage_backup_path': str,
-            'machine_id_backup_path': str
+            'old_machine_id': str,  # 旧的机器 ID
+            'new_machine_id': str,  # 新的机器 ID
+            'old_device_id': str,   # 旧的设备 ID
+            'new_device_id': str,   # 新的设备 ID
+            'storage_backup_path': str,  # storage.json 备份文件的路径
+            'machine_id_backup_path': str # machine ID 备份文件的路径
         }
     """
     storage_path = get_storage_path()
@@ -52,33 +52,33 @@ def modify_telemetry_ids() -> dict:
     if not os.path.exists(storage_path):
         raise FileNotFoundError(f"Storage file not found at: {storage_path}")
     
-    # Create backups before modification
+    # 修改前创建备份
     storage_backup_path = _create_backup(storage_path)
     machine_id_backup_path = None
     if os.path.exists(machine_id_path):
         machine_id_backup_path = _create_backup(machine_id_path)
     
-    # Read the current JSON content
+    # 读取当前的 JSON 内容
     with open(storage_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     
-    # Store old values
+    # 存储旧值
     old_machine_id = data.get('telemetry.machineId', '')
     old_device_id = data.get('telemetry.devDeviceId', '')
     
-    # Generate new IDs
+    # 生成新的 ID
     new_machine_id = generate_machine_id()
     new_device_id = generate_device_id()
     
-    # Update the values in storage.json
+    # 更新 storage.json 中的值
     data['telemetry.machineId'] = new_machine_id
     data['telemetry.devDeviceId'] = new_device_id
     
-    # Write the modified content back to storage.json
+    # 将修改后的内容写回 storage.json
     with open(storage_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4)
     
-    # Write the new machine ID to the machine ID file
+    # 将新的 machine ID 写入 machine ID 文件
     with open(machine_id_path, 'w', encoding='utf-8') as f:
         f.write(new_device_id)
     

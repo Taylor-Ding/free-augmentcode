@@ -7,7 +7,7 @@ from utils.paths import get_workspace_storage_path
 from pathlib import Path
 
 def remove_readonly(func, path, excinfo):
-    """Handle read-only files and directories during deletion"""
+    """在删除过程中处理只读文件和目录"""
     try:
         os.chmod(path, stat.S_IWRITE)
         func(path)
@@ -17,12 +17,12 @@ def remove_readonly(func, path, excinfo):
 
 def force_delete_directory(path: Path) -> bool:
     """
-    Force delete a directory and all its contents.
-    Returns True if successful, False otherwise.
+    强制删除目录及其所有内容。
+    成功则返回 True，否则返回 False。
     """
     try:
         if os.name == 'nt':
-            # For Windows, handle read-only files and use long path
+            # 对于 Windows，处理只读文件并使用长路径
             path_str = '\\\\?\\' + str(path.resolve())
             shutil.rmtree(path_str, onerror=remove_readonly)
         else:
@@ -33,18 +33,18 @@ def force_delete_directory(path: Path) -> bool:
 
 def clean_workspace_storage() -> dict:
     """
-    Cleans the workspace storage directory after creating a backup.
+    创建备份后清理工作区存储目录。
     
-    This function:
-    1. Gets the workspace storage path
-    2. Creates a zip backup of all files in the directory
-    3. Deletes all files in the directory
+    此函数执行以下操作：
+    1. 获取工作区存储路径
+    2. 创建目录中所有文件的 zip 备份
+    3. 删除目录中的所有文件
     
-    Returns:
-        dict: A dictionary containing operation results
+    返回:
+        dict: 包含操作结果的字典
         {
-            'backup_path': str,
-            'deleted_files_count': int
+            'backup_path': str,  # 备份文件的路径
+            'deleted_files_count': int # 删除的文件数量
         }
     """
     workspace_path = get_workspace_storage_path()
@@ -52,14 +52,14 @@ def clean_workspace_storage() -> dict:
     if not os.path.exists(workspace_path):
         raise FileNotFoundError(f"Workspace storage directory not found at: {workspace_path}")
     
-    # Convert to Path object for better path handling
+    # 转换为 Path 对象以便更好地处理路径
     workspace_path = Path(workspace_path)
     
-    # Create backup filename with timestamp
+    # 创建带时间戳的备份文件名
     timestamp = int(time.time())
     backup_path = f"{workspace_path}_backup_{timestamp}.zip"
     
-    # Create zip backup
+    # 创建 zip 备份
     failed_compressions = []
     with zipfile.ZipFile(backup_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for file_path in workspace_path.rglob('*'):
@@ -78,10 +78,10 @@ def clean_workspace_storage() -> dict:
                     })
                     continue
     
-    # Count files before deletion
+    # 删除前统计文件数量
     total_files = sum(1 for _ in workspace_path.rglob('*') if _.is_file())
     
-    # Delete all files in the directory
+    # 删除目录中的所有文件
     failed_operations = []
     
     def handle_error(e: Exception, path: Path, item_type: str):
@@ -91,14 +91,14 @@ def clean_workspace_storage() -> dict:
             'error': str(e)
         })
 
-    # First attempt: Try to delete the entire directory tree at once
+    # 首次尝试：一次性删除整个目录树
     if not force_delete_directory(workspace_path):
-        # If bulk deletion fails, try the file-by-file approach
-        # Delete files first
+        # 如果批量删除失败，则尝试逐个文件删除的方法
+        # 首先删除文件
         for file_path in workspace_path.rglob('*'):
             if file_path.is_file():
                 try:
-                    # Clear read-only attribute if present
+                    # 如果存在只读属性，则清除它
                     if os.name == 'nt':
                         file_path_str = '\\\\?\\' + str(file_path.resolve())
                         os.chmod(file_path_str, stat.S_IWRITE)
@@ -109,7 +109,7 @@ def clean_workspace_storage() -> dict:
                 except (OSError, PermissionError) as e:
                     handle_error(e, file_path, 'file')
 
-        # Delete directories from deepest to root
+        # 从最深层到根目录删除目录
         dirs_to_delete = sorted(
             [p for p in workspace_path.rglob('*') if p.is_dir()],
             key=lambda x: len(str(x).split(os.sep)),
@@ -118,9 +118,9 @@ def clean_workspace_storage() -> dict:
         
         for dir_path in dirs_to_delete:
             try:
-                # Try force delete first
+                # 首先尝试强制删除
                 if not force_delete_directory(dir_path):
-                    # If force delete fails, try regular delete
+                    # 如果强制删除失败，尝试常规删除
                     if os.name == 'nt':
                         dir_path_str = '\\\\?\\' + str(dir_path.resolve())
                         os.rmdir(dir_path_str)

@@ -5,32 +5,32 @@ import secrets
 
 def generate_machine_id() -> str:
     """
-    Generate a random 64-character hex string for machine ID.
-    Similar to using /dev/urandom in bash but using Python's cryptographic functions.
+    为机器 ID 生成一个随机的64个字符的十六进制字符串。
+    类似于在 bash 中使用 /dev/urandom，但这里使用 Python 的加密函数。
     
-    Returns:
-        str: A 64-character hexadecimal string
+    返回:
+        str: 一个64个字符的十六进制字符串
     """
-    # Generate 32 random bytes (which will become 64 hex characters)
+    # 生成32个随机字节 (将变为64个十六进制字符)
     random_bytes = secrets.token_bytes(32)
-    # Convert to hexadecimal string
+    # 转换为十六进制字符串
     return random_bytes.hex()
 
 
 def generate_device_id() -> str:
     """
-    Generate a random UUID v4 for device ID.
+    为设备 ID 生成一个随机的 UUID v4。
     
-    Returns:
-        str: A lowercase UUID v4 string in the format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-        where x is any hexadecimal digit and y is one of 8, 9, A, or B
+    返回:
+        str: 一个小写的 UUID v4 字符串，格式为：xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+        其中 x 是任何十六进制数字，y 是 8、9、A 或 B 中的一个
     """
-    # Generate a random UUID v4
+    # 生成一个随机的 UUID v4
     device_id = str(uuid.uuid4())
     return device_id.lower()
 
 
 if __name__ == "__main__":
-    # Example usage
+    # 示例用法
     print(f"Machine ID: {generate_machine_id()}")
     print(f"Device ID: {generate_device_id()}") 
