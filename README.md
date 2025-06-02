@@ -61,26 +61,49 @@ free-augmentcode/
 
 ```mermaid
 graph TD
-    A[开始 index.py / Start index.py] --> B{显示系统路径 / Display System Paths};
-    B --> C{修改遥测 ID / Modify Telemetry IDs};
-    C --&gt; D[调用 modify_telemetry_ids / Call modify_telemetry_ids];
-    D --&gt; D_B1[备份 storage.json 和 machineid 文件 / Backup storage.json & machineid file];
-    D_B1 --&gt; D_R[读取 storage.json / Read storage.json];
-    D_R --&gt; D_G[生成新 ID / Generate new IDs];
-    D_G --&gt; D_U[更新 storage.json / Update storage.json];
-    D_U --&gt; D_W[写入新 machineid 文件 / Write new machineid file];
-    D_W --&gt; E{清理 SQLite 数据库 / Clean SQLite Database};
-    E --&gt; F[调用 clean_augment_data / Call clean_augment_data];
-    F --&gt; F_B1[备份 state.vscdb / Backup state.vscdb];
-    F_B1 --&gt; F_C[连接数据库 / Connect to DB];
-    F_C --&gt; F_D[删除 'augment' 相关记录 / Delete 'augment' records];
-    F_D --&gt; F_CM[提交更改 / Commit changes];
-    F_CM --&gt; G{清理工作区存储 / Clean Workspace Storage};
-    G --&gt; H[调用 clean_workspace_storage / Call clean_workspace_storage];
-    H --&gt; H_B1[备份 workspaceStorage (zip) / Backup workspaceStorage (zip)];
-    H_B1 --&gt; H_D[删除 workspaceStorage 内容 / Delete contents of workspaceStorage];
-    H_D --&gt; I[结束 / End];
+    A[Start index.py] --> B{Display System Paths};
+    B --> C{Modify Telemetry IDs};
+    C --&gt; D[Call modify_telemetry_ids];
+    D --&gt; D_B1[Backup storage.json and machineid file];
+    D_B1 --&gt; D_R[Read storage.json];
+    D_R --&gt; D_G[Generate new IDs];
+    D_G --&gt; D_U[Update storage.json];
+    D_U --&gt; D_W[Write new machineid file];
+    D_W --&gt; E{Clean SQLite Database};
+    E --&gt; F[Call clean_augment_data];
+    F --&gt; F_B1[Backup state.vscdb];
+    F_B1 --&gt; F_C[Connect to DB];
+    F_C --&gt; F_D[Delete 'augment' records];
+    F_D --&gt; F_CM[Commit changes];
+    F_CM --&gt; G{Clean Workspace Storage};
+    G --&gt; H[Call clean_workspace_storage];
+    H --&gt; H_B1[Backup workspaceStorage (zip)];
+    H_B1 --&gt; H_D[Delete contents of workspaceStorage];
+    H_D --&gt; I[End];
 ```
+
+**流程图节点说明：**
+
+- `A[Start index.py]`: 启动 `index.py` 脚本
+- `B{Display System Paths}`: 显示系统路径信息
+- `C{Modify Telemetry IDs}`: 修改遥测ID（设备ID和机器ID）
+- `D[Call modify_telemetry_ids]`: 调用 `modify_telemetry_ids` 函数
+- `D_B1[Backup storage.json and machineid file]`: 备份 `storage.json` 和 `machineid` 文件
+- `D_R[Read storage.json]`: 读取 `storage.json` 文件内容
+- `D_G[Generate new IDs]`: 生成新的设备ID和机器ID
+- `D_U[Update storage.json]`: 更新 `storage.json` 文件中的ID
+- `D_W[Write new machineid file]`: 将新的机器ID写入 `machineid` 文件
+- `E{Clean SQLite Database}`: 清理SQLite数据库
+- `F[Call clean_augment_data]`: 调用 `clean_augment_data` 函数
+- `F_B1[Backup state.vscdb]`: 备份 `state.vscdb` 数据库文件
+- `F_C[Connect to DB]`: 连接到SQLite数据库
+- `F_D[Delete 'augment' records]`: 从数据库中删除包含 'augment' 关键字的记录
+- `F_CM[Commit changes]`: 提交数据库更改
+- `G{Clean Workspace Storage}`: 清理工作区存储
+- `H[Call clean_workspace_storage]`: 调用 `clean_workspace_storage` 函数
+- `H_B1[Backup workspaceStorage (zip)]`: 将 `workspaceStorage` 目录压缩备份为zip文件
+- `H_D[Delete contents of workspaceStorage]`: 删除 `workspaceStorage` 目录中的所有内容
+- `I[End]`: 程序结束
 
 ## 贡献
 
@@ -151,25 +174,25 @@ free-augmentcode/
 
 ```mermaid
 graph TD
-    A[开始 index.py / Start index.py] --> B{显示系统路径 / Display System Paths};
-    B --> C{修改遥测 ID / Modify Telemetry IDs};
-    C --&gt; D[调用 modify_telemetry_ids / Call modify_telemetry_ids];
-    D --&gt; D_B1[备份 storage.json 和 machineid 文件 / Backup storage.json & machineid file];
-    D_B1 --&gt; D_R[读取 storage.json / Read storage.json];
-    D_R --&gt; D_G[生成新 ID / Generate new IDs];
-    D_G --&gt; D_U[更新 storage.json / Update storage.json];
-    D_U --&gt; D_W[写入新 machineid 文件 / Write new machineid file];
-    D_W --&gt; E{清理 SQLite 数据库 / Clean SQLite Database};
-    E --&gt; F[调用 clean_augment_data / Call clean_augment_data];
-    F --&gt; F_B1[备份 state.vscdb / Backup state.vscdb];
-    F_B1 --&gt; F_C[连接数据库 / Connect to DB];
-    F_C --&gt; F_D[删除 'augment' 相关记录 / Delete 'augment' records];
-    F_D --&gt; F_CM[提交更改 / Commit changes];
-    F_CM --&gt; G{清理工作区存储 / Clean Workspace Storage};
-    G --&gt; H[调用 clean_workspace_storage / Call clean_workspace_storage];
-    H --&gt; H_B1[备份 workspaceStorage (zip) / Backup workspaceStorage (zip)];
-    H_B1 --&gt; H_D[删除 workspaceStorage 内容 / Delete contents of workspaceStorage];
-    H_D --&gt; I[结束 / End];
+    A[Start index.py] --> B{Display System Paths};
+    B --> C{Modify Telemetry IDs};
+    C --&gt; D[Call modify_telemetry_ids];
+    D --&gt; D_B1[Backup storage.json and machineid file];
+    D_B1 --&gt; D_R[Read storage.json];
+    D_R --&gt; D_G[Generate new IDs];
+    D_G --&gt; D_U[Update storage.json];
+    D_U --&gt; D_W[Write new machineid file];
+    D_W --&gt; E{Clean SQLite Database};
+    E --&gt; F[Call clean_augment_data];
+    F --&gt; F_B1[Backup state.vscdb];
+    F_B1 --&gt; F_C[Connect to DB];
+    F_C --&gt; F_D[Delete 'augment' records];
+    F_D --&gt; F_CM[Commit changes];
+    F_CM --&gt; G{Clean Workspace Storage};
+    G --&gt; H[Call clean_workspace_storage];
+    H --&gt; H_B1[Backup workspaceStorage (zip)];
+    H_B1 --&gt; H_D[Delete contents of workspaceStorage];
+    H_D --&gt; I[End];
 ```
 
 ## Contributing
